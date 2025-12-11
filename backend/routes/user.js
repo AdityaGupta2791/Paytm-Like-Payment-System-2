@@ -62,6 +62,7 @@ router.post("/signup", async (req, res) => {
         .json({
           msg: "User created successfully",
           firstName: user.firstName,
+          token: token,
         });
     }
   } 
@@ -91,6 +92,7 @@ router.post("/signin", async (req, res)=>{
         .header("Authorization", `Bearer ${token}`) 
         .json({
           msg: "Login Successful",
+          firstName: userExist.firstName,
           token: token,
         })
     }else{

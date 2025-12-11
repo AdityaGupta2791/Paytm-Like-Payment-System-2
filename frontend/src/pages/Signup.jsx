@@ -4,7 +4,7 @@ import SubHeading from '../components/SubHeading';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
 import BottomWarning from '../components/BottomWarning';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
@@ -21,11 +21,20 @@ const Signup = () => {
     e.preventDefault(); // Prevent default form submission behavior
 
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/user/signup", user);
+      const res = await api.post('/user/signup', user);
       console.log(res.data.msg);
 
       if (res.status === 201) {  // Check for successful response
-        navigate(`/dashboard?name=${res.data.firstName}`); 
+        // Save token to localStorage
+        if (res.data && res.data.token) {
+          try {
+            localStorage.setItem('token', res.data.token);
+            console.log('token saved (signup):', localStorage.getItem('token'));
+          } catch (e) {
+            console.error('Failed to save token to localStorage (signup):', e);
+          }
+        }
+        navigate(`/dashboard?name=${res.data.firstName}`);
       }
     } catch (error) {
       console.error('Error during signup:', error);

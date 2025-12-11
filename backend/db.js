@@ -43,7 +43,7 @@ userSchema.methods.validatePassword = async function (password){
   return await bcrypt.compare(password, this.hashedPassword);
 }
 
-// Create a Schema for user balance
+// Create a Schema for user balance i.e Accounts
 const accountSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,

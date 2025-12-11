@@ -5,7 +5,7 @@ import InputBox from '../components/InputBox'
 import Button from '../components/Button'
 import BottomWarning from '../components/BottomWarning'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 
 const Signin = () => {
   const [user, setUser] = useState({
@@ -19,14 +19,23 @@ const Signin = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/user/signin", user);
+      const res = await api.post('/user/signin', user);
       console.log(res.data);
 
       if (res.status === 200) {  // Check for successful response
-        navigate("/dashboard"); 
+        // Save token to localStorage
+        if (res.data && res.data.token) {
+          try {
+            localStorage.setItem('token', res.data.token);
+            console.log('token saved (signin):', localStorage.getItem('token'));
+          } catch (e) {
+            console.error('Failed to save token to localStorage (signin):', e);
+          }
+        }
+        navigate(`/dashboard?name=${res.data.firstName}`);
       }
     } catch (error) {
-      console.error('Error during signup:', error);
+      console.error('Error during signin:', error);
     }
   }
 
@@ -50,7 +59,7 @@ const Signin = () => {
               onChangeHandler={(e)=> setUser({...user, password: e.target.value })}
             />
             <Button 
-              label={"Sign up"} 
+              label={"Sign in"} 
               type="button" // Added type="button" to prevent form submission
               onClickHandler={postData}
             />

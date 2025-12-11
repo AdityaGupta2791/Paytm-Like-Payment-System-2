@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const SendTo = () => {
   const [searchParams] = useSearchParams();
@@ -9,15 +9,13 @@ const SendTo = () => {
 
   const [amount, setAmount] = useState();
 
-  const onClickHandler = () =>{
-    axios.post("http://localhost:3000/api/v1/account/transfer",{
-      to: id,
-      amount
-      },{
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token")
-      }
-    })
+  const onClickHandler = async () =>{
+    try {
+      await api.post('/account/transfer', { to: id, amount });
+      // optionally provide feedback here
+    } catch (err) {
+      console.error('Transfer error:', err);
+    }
   }
   
   return (

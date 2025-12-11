@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Users from '../components/Users';
-import axios from 'axios';
+import api from '../api';
 
 const UserComponent = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/v1/user/bulk")
+    api.get('/user/bulk')
       .then(res => setUsers(res.data.user))
       .catch(error => {
         console.error("Error fetching users:", error);
