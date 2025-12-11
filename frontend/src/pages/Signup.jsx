@@ -24,17 +24,26 @@ const Signup = () => {
       const res = await api.post('/user/signup', user);
       console.log(res.data.msg);
 
-      if (res.status === 201) {  // Check for successful response
-        // Save token to localStorage
+      if (res.status === 201) {
         if (res.data && res.data.token) {
           try {
             localStorage.setItem('token', res.data.token);
-            console.log('token saved (signup):', localStorage.getItem('token'));
           } catch (e) {
             console.error('Failed to save token to localStorage (signup):', e);
           }
         }
-        navigate(`/dashboard?name=${res.data.firstName}`);
+
+        if (res.data && res.data.firstName) {
+          try {
+            localStorage.setItem('name', res.data.firstName);
+          } catch (e) {
+            console.error('Failed to save name to localStorage (signup):', e);
+          }
+        }
+
+        try { window.dispatchEvent(new Event('authChanged')); } catch (e) {}
+        
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Error during signup:', error);

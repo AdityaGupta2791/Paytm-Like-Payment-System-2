@@ -1,9 +1,7 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const Users = ({user}) => {
-  const navigate = useNavigate();
-
   return (
     <div className='flex items-center justify-between mb-5'>
       <div className='flex justify-center items-center gap-2'>
@@ -14,12 +12,11 @@ const Users = ({user}) => {
         </div>
         <p className='text-xl font-semibold'>{user.firstName +" "+ user.lastName}</p>
       </div>
-      <button 
-        onClick={()=>{
-          navigate(`/send?id=${user._id}&name=${user.firstName}`)
-        }}
-        className='bg-black text-white rounded-md py-1.5 px-3'>Send Money
-      </button>
+      <Link to={`/send?id=${user._id}&name=${user.firstName}`}>
+        <button className='bg-black text-white rounded-md py-1.5 px-3'>
+          Send Money
+        </button>
+      </Link>
     </div>
   )
 }

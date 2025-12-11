@@ -22,17 +22,27 @@ const Signin = () => {
       const res = await api.post('/user/signin', user);
       console.log(res.data);
 
-      if (res.status === 200) {  // Check for successful response
-        // Save token to localStorage
+      if (res.status === 200) {  
         if (res.data && res.data.token) {
           try {
             localStorage.setItem('token', res.data.token);
-            console.log('token saved (signin):', localStorage.getItem('token'));
           } catch (e) {
             console.error('Failed to save token to localStorage (signin):', e);
           }
         }
-        navigate(`/dashboard?name=${res.data.firstName}`);
+
+        if (res.data && res.data.firstName) {
+          try {
+            localStorage.setItem('name', res.data.firstName);
+          } catch (e) {
+            console.error('Failed to save name to localStorage (signin):', e);
+          }
+        }
+
+        // notify other components (Navbar) that auth state changed
+        try { window.dispatchEvent(new Event('authChanged')); } catch (e) {}
+
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Error during signin:', error);

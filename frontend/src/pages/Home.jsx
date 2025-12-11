@@ -2,11 +2,9 @@ import React from 'react'
 import Heading from '../components/Heading'
 import SubHeading from '../components/SubHeading'
 import Button from '../components/Button'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center gap-8">
@@ -15,13 +13,15 @@ const Home = () => {
           <SubHeading label={"Send money, manage balance and pay bills — all in one secure app."} />
 
           <div className="flex gap-4 justify-center md:justify-start mt-6">
-            <Button label={"Get Started"} onClickHandler={() => navigate('/signup')} />
-            <button
-              onClick={() => navigate('/signin')}
-              className="text-black bg-white my-3 py-[8px] px-10 rounded-md border border-gray-300"
-            >
-              Sign In
-            </button>
+            <Link to="/signup">
+              <Button label={"Get Started"} />
+            </Link>
+
+            <Link to="/signin">
+              <button className="text-black bg-white my-3 py-[8px] px-10 rounded-md border border-gray-300">
+                Sign In
+              </button>
+            </Link>
           </div>
         </div>
 
