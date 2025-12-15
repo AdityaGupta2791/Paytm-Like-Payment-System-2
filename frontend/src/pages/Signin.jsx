@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Heading from '../components/Heading'
 import SubHeading from '../components/SubHeading'
 import InputBox from '../components/InputBox'
@@ -12,13 +12,34 @@ const Signin = () => {
     username: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState('');
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (token) navigate('/dashboard', { replace: true });
+    } catch (e) {
+      // ignore
+    }
+  }, [navigate]);
+
   const postData = async (e) =>{
     e.preventDefault();
+    setServerError('');
+    // client-side validation
+    const errs = {};
+    if (!user.username || user.username.trim().length === 0) errs.username = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.username)) errs.username = 'Enter a valid email';
+    if (!user.password || user.password.length < 6) errs.password = 'Password must be at least 6 characters';
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
 
     try {
+      setLoading(true);
       const res = await api.post('/user/signin', user);
       console.log(res.data);
 
@@ -46,7 +67,10 @@ const Signin = () => {
       }
     } catch (error) {
       console.error('Error during signin:', error);
-    }
+      setServerError(error?.response?.data?.msg || error.message || 'Signin failed');
+    } finally {
+      setLoading(false);
+      }
   }
 
   return (
@@ -55,23 +79,32 @@ const Signin = () => {
         <div className='flex flex-col items-center justify-center mx-auto w-[300px]'>
           <Heading label={"Sign In"} />
           <SubHeading label={"Enter your credentials to access your account"} />
-          <form>
+          <form onSubmit={postData}>
+            {serverError && <p className='text-sm text-red-600 mb-2'>{serverError}</p>}
             <InputBox 
               label={"Email"} 
+              name="username"
               type={"email"} 
               placeholder={"abc@gmail"} 
               onChangeHandler={(e)=> setUser({...user, username: e.target.value })}
+              value={user.username}
+              error={errors.username}
             />
             <InputBox 
               label={"Password"} 
+              name="password"
               type={"password"} 
               placeholder={"123456"} 
               onChangeHandler={(e)=> setUser({...user, password: e.target.value })}
+              value={user.password}
+              error={errors.password}
             />
             <Button 
               label={"Sign in"} 
-              type="button" // Added type="button" to prevent form submission
+              type="submit"
               onClickHandler={postData}
+              disabled={loading}
+              loading={loading}
             />
             <BottomWarning 
               text={"Don't have an account?"} 
