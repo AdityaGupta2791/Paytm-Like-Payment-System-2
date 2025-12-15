@@ -1,10 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Heading from '../components/Heading'
 import SubHeading from '../components/SubHeading'
 import Button from '../components/Button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (token) navigate('/dashboard', { replace: true });
+    } catch (e) {
+      // ignore
+    }
+  }, [navigate]);
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center gap-8">
