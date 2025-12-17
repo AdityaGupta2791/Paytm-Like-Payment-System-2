@@ -3,6 +3,10 @@ import axios from 'axios';
 // Vite exposes env vars on `import.meta.env`. Use `VITE_API_BASE` if set.
 const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE) || 'http://localhost:3000';
 
+if (typeof import.meta !== 'undefined' && import.meta.env && !import.meta.env.VITE_API_BASE) {
+  console.warn('VITE_API_BASE is not set. Using fallback API base:', API_BASE);
+}
+
 const api = axios.create({
   baseURL: `${API_BASE}/api/v1`,
 });
